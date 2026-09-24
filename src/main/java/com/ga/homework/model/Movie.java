@@ -1,34 +1,40 @@
 package com.ga.homework.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Getter
 @Setter
-
-
+@ToString
 @Entity
-@Table(name="categories")
-public class Category {
+@Table(name="movies")
+public class Movie {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String name;
+    @Column String name;
 
-    @Column
-    private String description;
+    @Column String time;
+
+    @Column Integer year;
+
+    @Column private String movieCast;
+
+    @Column private  boolean isPublish;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="category_id")
+    private Category category;
 
     @Column
     @CreationTimestamp
@@ -37,11 +43,5 @@ public class Category {
     @Column
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @Column(nullable = true)
-    private String imageUrl;
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="category", orphanRemoval = true)
-    private List<Movie> movieList;
 
 }
