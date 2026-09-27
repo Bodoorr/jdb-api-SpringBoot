@@ -1,6 +1,7 @@
 package com.ga.homework.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -43,5 +44,10 @@ public class Category {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy="category", orphanRemoval = true)
     private List<Movie> movieList;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
