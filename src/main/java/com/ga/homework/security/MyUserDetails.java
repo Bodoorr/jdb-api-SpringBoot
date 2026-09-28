@@ -2,6 +2,7 @@ package com.ga.homework.security;
 
 import com.ga.homework.model.User;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 public class MyUserDetails implements UserDetails {
+    @Getter
     private User user;
 
     @Override

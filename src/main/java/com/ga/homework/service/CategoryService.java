@@ -3,8 +3,11 @@ package com.ga.homework.service;
 import com.ga.homework.exception.InformationExistException;
 import com.ga.homework.exception.InformationNotFoundException;
 import com.ga.homework.model.Category;
+import com.ga.homework.model.User;
 import com.ga.homework.repository.CategoryRepository;
+import com.ga.homework.security.MyUserDetails;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,13 +22,21 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class CategoryService {
+
+    public static User getCurrentLoggedInUser(){
+        MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userDetails.getUser();
+    }
+
+
     private final String UPLOAD_DIR = "uploads/";
     private CategoryRepository categoryRepository;
+
 
     public Category createCategory(String name, String description, MultipartFile image) {
         System.out.println("Service Calling createCategory ==> ");
 
-        Category category = categoryRepository.findByName(name);
+        Category category = categoryRepository.findByUserIdAndName(getCurrentLoggedInUser().getId(),name);
         if (category != null) {
             throw new InformationExistException("category with name " + category.getName() + " already exists");
         }
@@ -54,6 +65,7 @@ public class CategoryService {
         } catch (IOException e) {
             throw new RuntimeException("Could not save image", e);
         }
+        newCategory.setUser(getCurrentLoggedInUser());
         return categoryRepository.save(newCategory);
     }
         public List<Category> getCategories() {
@@ -82,6 +94,9 @@ public class CategoryService {
                         )
                 );
 
+        if (!existingCategory.getUser().getId().equals(getCurrentLoggedInUser().getId())){
+            throw new RuntimeException("You are not allowed to update this category");
+        }
         existingCategory.setName(categoryObject.getName());
         existingCategory.setDescription(categoryObject.getDescription());
 
@@ -99,6 +114,9 @@ public class CategoryService {
                         )
                 );
 
+        if (!category.getUser().getId().equals(getCurrentLoggedInUser().getId())){
+            throw new RuntimeException("You are not allowed to delete this category");
+        }
         categoryRepository.delete(category);
         return category;
     }

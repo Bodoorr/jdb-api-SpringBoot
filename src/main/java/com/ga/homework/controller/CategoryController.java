@@ -2,8 +2,11 @@ package com.ga.homework.controller;
 
 
 import com.ga.homework.model.Category;
+import com.ga.homework.model.User;
+import com.ga.homework.security.MyUserDetails;
 import com.ga.homework.service.CategoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CategoryController {
     private CategoryService categoryService;
-
 
     @PostMapping("/categories")
     public Category createCategory(@RequestParam("name") String name, @RequestParam("description") String description, @RequestParam("image") MultipartFile image){
